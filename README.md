@@ -4,3 +4,5 @@ workflow.txt outlines the code workflows, from downloading to data preparation t
 
 
 Noel Siegert, 2/26/26
+
+[![DOI](https://zenodo.org/badge/1167756550.svg)](https://doi.org/10.5281/zenodo.18793997)
