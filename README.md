@@ -2,7 +2,7 @@
 
 workflow.txt outlines the code workflows, from downloading to data preparation to analysis. 
 
-The generall process for all data sources are download daily data, select data from desired locations, save in an array of shape [n. stations, time], perform detrending/any prep, perform analysis
+The general process for all data sources are download daily data, select data from desired locations, save in an array of shape [n. stations, time], perform detrending/any prep, perform analysis
 
 Please note that filepaths may be slightly different because I am manually organizing/uploading this code to a cleaner/more organized github repository.
 
