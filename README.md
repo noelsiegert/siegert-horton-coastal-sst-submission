@@ -7,6 +7,6 @@ The general process for all data sources are download daily data, select data fr
 Please note that filepaths may be slightly different because I am manually organizing/uploading this code to a cleaner/more organized github repository.
 
 
-Noel Siegert, 2/26/26
+Noel Siegert, 2/26/26 [Updated 7/15/26 following resubmission of revisions]
 
 [![DOI](https://zenodo.org/badge/1167756550.svg)](https://doi.org/10.5281/zenodo.18793997)
