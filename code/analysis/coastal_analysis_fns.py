@@ -1,7 +1,7 @@
 # ---
 # ## Function Defs for analysis for the Coastal project.
 # #### Noel Siegert, 2/14/25
-# #### Last Updated: 10/16/25
+# #### Last Updated: 6/18/26
 # ---
 
 # dependencies
@@ -14,6 +14,7 @@ import pandas as pd
 import geopandas as gpd
 from datetime import datetime
 from scipy import stats
+from scipy.spatial import cKDTree
 
 
 # bin for lat scatters
@@ -394,3 +395,101 @@ def prep_global_binned_leadlags(da, event_onsets, window, latbins):
     bin_lag_profile_da = xr.DataArray(bin_lag_profile_arr, dims=['lat bin', 'day'], coords={'lat bin':bin_midpoints, 'day':np.array(range(-window, (window+1)))})
 
     return bin_lag_profile_da     
+
+
+def compute_density_weights(lats, lons, radius_deg=5.0):
+    """
+    Inverse density weights for stations within a latitude band.
+    Uses KD-tree to count neighbors within radius_deg.
+
+    inputs: list of lats, lons, and radius (in ˚) for which to look for neighbors. depends on what spatial scale you think is important
+
+    6/18/26
+    """
+    # approx planar distance in degrees (fine within a narrow lat band)
+    coords = np.column_stack([lats, lons])
+    tree = cKDTree(coords)
+    
+    # count other stations within radius (incl. self)
+    neighbor_counts = np.array([len(tree.query_ball_point(pt, radius_deg)) for pt in coords])
+    
+    weights = 1.0 / neighbor_counts
+    
+    return weights / weights.sum()  # normalize to sum to 1
+
+
+def bin_lat_scatters_densitywtd_bootCI(latbins, lats, lons, dat, nboot, radius_deg):
+    '''
+    like bin_lat_scatters, but within each lat-bin I'm doing nboot bootstrapped means 
+        (sampled with replacement) and weighted by inverse of station density (to try to
+        counteract the effect of station spatial clustering/autocorrelation on the lat-bin-mean)
+
+    new input params: lons, nboot, radius_deg (what the density radius of autocorr. is that you care about    
+    
+    returns: median, 97.5, and 2.5 %ile estimates for bootstrapped means, the entire array of 1k bootstrap iterations, bin midpoints, and bin num. obs. 
+
+    6/18/26
+    6/21/26 - added like 3 lines to ignore inf's when taking means
+    '''
+
+    # random seed
+    rng = np.random.default_rng(27)
+
+    # empty arrays to hold output
+    binned_boots = np.zeros(shape=(len(latbins)-1, nboot)) * np.nan # dims = [lat_bin, bootstrap_mean_draw]
+    bin_midpoints = np.zeros(len(latbins)-1)
+    bin_n_obs = np.zeros(len(latbins)-1)
+    
+    i = 0
+    
+    no_inf_mask = np.logical_not(np.isinf(dat)) # 5/9
+
+    # for each lat bin
+    while i < len(latbins)-1:
+
+        # sel lat bin bounds, generate bin mask
+        bot_bin = latbins[i]
+        top_bin = latbins[i+1]
+        binmask = (lats >= bot_bin) * (lats < top_bin)
+
+#        print(i, bot_bin, top_bin)
+
+        # skip bin if there are no obs in that bin
+        if np.sum(binmask) == 0:
+#            print('skip this bin.')
+            bin_midpoints[i] = ((bot_bin+top_bin)/2)
+            bin_n_obs[i] = 0
+            i += 1
+            continue
+
+        # set vals to send to bootstrap
+        dat_bin = dat[binmask]
+        lats_bin = lats[binmask]
+        lons_bin = lons[binmask]
+
+        # distance-weights for this lat bin
+        weights = compute_density_weights(lats=lats_bin, lons=lons_bin, radius_deg=radius_deg)
+
+        # empty array to store bootstrap draws
+        boot_stats = (np.zeros(nboot) * np.nan)
+
+        # do the bootstrapped mean
+        for b in range(nboot):
+            idx = rng.choice(len(dat_bin), size=len(dat_bin), replace=True, p=weights)
+
+            # 6/21/26 - adding another step to ignore inf when taking the mean
+            ddd = dat_bin[idx]
+            no_inf_mask = np.logical_not(np.isinf(ddd))
+
+            # do the bootstrapped mean
+            boot_stats[b] = np.nanmean(ddd[no_inf_mask]) 
+
+        # add the results to the output arrays
+        binned_boots[i, :] = boot_stats
+        bin_midpoints[i] = ((bot_bin+top_bin)/2)
+        bin_n_obs[i] = np.sum(binmask)
+
+        # update counter var
+        i += 1
+    
+    return np.quantile(binned_boots, 0.5, axis=1), np.quantile(binned_boots, 0.975, axis=1), np.quantile(binned_boots, 0.025, axis=1), binned_boots, bin_midpoints, bin_n_obs

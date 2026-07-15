@@ -1,9 +1,15 @@
 ======================================================================
 Coastal SST Project Workflow (what a mess!)
 Noel Siegert
-(last updated: 2/26/26)
+(last updated: 7/15/26)
 ======================================================================
 
+**
+Note 7/10: I have slightly changed the names of the output figures between generating them and re-submitting the manuscript. 
+ex. my "Fig. 1" script generates a plot called Fig1_coastalsst_grl_6_26.png --> I rename this when I submit so it's now called "Fig1_coastalsst_grl_7_26.png"
+Same with a few supplemental figures, which I generated before I decided what order they would go in.
+I have noted the "final" filenames for each figure below. 
+**
 
 ----------------------------------------------------------------------
 Pre-downloading
@@ -83,7 +89,18 @@ SST DATA PREP
 
 STATION DATA PREP
 
-Compute daily Tmin, Tmax & mean Dewpoint for selected stations, and generate detrended anomalies using 11-day rolling window, put all station data into 1 file
+** Don't think I use this?? **
+Compute daily Tmin, Tmax & mean Dewpoint for selected stations, put all station data into 1 file (no detrending)
+- code/dataprep/prep_daily_stationdata_expanded_txtntd.py
+    - Input files:
+        - /dx01/nsiegert/HadISD/raw_expanded/hadisd.3.4.1.2024f_19310101-20250101_{}.nc'.format(staid)
+    - Output files:
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.nc
+** Don't think I use this?? **
+
+Compute daily Tmin, Tmax & mean Dewpoint for stations, and generate detrended anomalies using 11-day rolling window, put all station data into 1 file
 - code/dataprep/prep_daily_stationdata_expanded_txtntd_roll11.py
     - Input files:
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
@@ -96,15 +113,6 @@ Compute daily Tmin, Tmax & mean Dewpoint for selected stations, and generate det
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.detrend_stanom.roll11.nc
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.detrend_stanom.roll11.nc
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.detrend_stanom.roll11.nc
-        
-Compute daily Tmin, Tmax & mean Dewpoint for selected stations, put all station data into 1 file (no detrending)
-- code/dataprep/prep_daily_stationdata_expanded_txtntd.py
-    - Input files:
-        - /dx01/nsiegert/HadISD/raw_expanded/hadisd.3.4.1.2024f_19310101-20250101_{}.nc'.format(staid)
-    - Output files:
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.nc
 
 Prepare SLP Data from stations, create dtrended and std. anomalies, save in one file for all stations
 - code/dataprep/prep_daily_stationdata_expanded_slp_roll11.py
@@ -126,6 +134,29 @@ Prepare windspeed Data from stations, create dtrended and std. anomalies, save i
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.windspeeds.detrend_anom.roll11.nc
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.windspeeds.detrend_stanom.roll11.nc
 
+Prepare Heat Index data from stations (for Fig. S6) ** EDIT **
+- /home/nsiegert/projects/coastal_sst/code/dataprep/prep_daily_heatindex_expanded.ipynb
+    - Input files:
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.nc
+    - Output files:
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.HI.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.rh.nc
+
+Prepare (Estimated) Tw data from stations (for Fig. S6), and generate detrended anomalies ** EDIT **
+- /home/nsiegert/projects/coastal_sst/code/dataprep/prep_detredanom_daily_Tw_est.ipynb
+    - Input files
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.rh.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves.nc
+    - Output files
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.Tw.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.Tw.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.Tw.detrend_stanom.roll11.nc
 
 NON-STATION (ERA5 OR COPERNICUS) DATA PREP
 
@@ -158,6 +189,7 @@ Generate detrended anomalies for non-weather-station variables (SST, ERA5, Coper
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.OverStations.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.mld.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.HI.detrend_anom.roll11.nc # (heat index, this is a station variable but plugged into this script)
   
 Prepare ERA5 Temperature profiles 1 (Select/prepare ERA5 T and Td profiles over each coastal weather station and 
 - /glade/u/home/nsiegert/projects/coastal_sst/code/prep_daily_Era5TProfiles.py
@@ -224,6 +256,22 @@ ID THW's
 Some necessary analysis fn's
 - projects/coastal_sst/code/analysis/coastal_analysis_fns.py
 
+Compute composite MHW, THW, and Concurrent event progressions for Fig. 3 and S10-11, using the density weighted bootstrap resampling
+- /home/nsiegert/projects/coastal_sst/code/analysis/analyze_leadlags_with_bootstrap1-stdversion.py
+    - Input files:
+         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.slp.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.windspeeds.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.sst.detrend_stanom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.OverStations.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.mld.detrend_stanom.roll11.nc
+        - /home/nsiegert/projects/coastal_sst/data/t_profiles/GlobalMean_STD_Tprofiles_forFig.nc
+    - Output files: 
+        - '/dx02/data/nsiegert/coastal_mhw_data/{}_std_{}_{}_latbinned_bootmeans.nc'.format(varname, ev_type, szn)) 
+
 Compute mean Tanomaly profiles during MHW, THW, and concurrent events
 - /glade/u/home/nsiegert/projects/coastal_sst/code/analyze_Tprofiles-roll11std.ipynb
     - input files:
@@ -232,12 +280,20 @@ Compute mean Tanomaly profiles during MHW, THW, and concurrent events
         - /glade/u/home/nsiegert/projects/coastal_sst/data/ALLSTATIONS.OverStations.Tprofile.detrend_stanom.roll11.nc
     - output files:
         - /home/nsiegert/projects/coastal_sst/data/t_profiles/GlobalMean_STD_Tprofiles_forFig.nc # (scp'd from NCAR glade to LDEO deela compute systems)
+        -'/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn)
+
+Compute mean Tanomaly profiles during MHW, THW, and concurrent events - applying region stratified + density-wtd bootstrap resample
+- /home/nsiegert/projects/coastal_sst/code/analysis/analyze_Tprofiles_with_bootstrap.ipynb
+    - Input files:
+        - '/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn)
+    - Output files:
+        - '/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Bootstrap_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn))
 
 
 FIGURES
 
 Figure 1
-- code/analysis/Fig1_submissionFeb26.ipynb
+- code/analysis/Fig1_resubmissionJun26.ipynb
     - Input files: 
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
@@ -250,45 +306,93 @@ Figure 1
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.sst.detrend_anom.roll11.nc
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.warm_cold_seasons.nc
     - Output files: 
-        - projects/coastal_sst/plots/grl_submission_2.2026/Fig1_coastalsst_grl_2_26.png
+        - projects/coastal_sst/plots/grl_resubmission_6.2026/Fig1_coastalsst_grl_6_26.png
+            - name of file uploaded with manuscript and on github 7/26: "Fig1_coastalsst_grl_7_26.png"
 
 Figure 2
-- code/analysis/Fig2_submissionFeb26.ipynb
+- code/analysis/Fig2_resubmissionJun26.ipynb <-- This script generates Fig. 2 and S8
     - Input files:
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.heatwaves.nc ## ??? should I be doing a roll11...
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.heatwaves.nc 
     - Output files: 
-        - projects/coastal_sst/plots/grl_submission_2.2026/Fig2_coastalsst_grl_2_26.png
-        - projects/coastal_sst/plots/grl_submission_2.2026/FigSe_coastalsst_grl_2_26.png
+        - projects/coastal_sst/plots/grl_resubmission_6.2026/Fig2_coastalsst_grl_6_26.png
+            - name of file uploaded with manuscript and on github 7/26: "Fig2_coastalsst_grl_7_26.png"
+        - projects/coastal_sst/plots/grl_submission_2.2026/FigSe_coastalsst_grl_2_26.png 
+            - name of file uploaded with manuscript / github repository: "FigS8_coastalsst_grl_7_26_reg_trends_in_con_days.png"
 
-
-- Figure 3
-- code/analysis/Fig3_submissionFeb26.ipynb
+Figure 3
+- code/analysis/Fig3_resubmissionJun26.ipynb
     - Input files:
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.detrend_stanom.roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.detrend_stanom.roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.slp.detrend_stanom.roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.windspeeds.detrend_stanom.roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.sst.detrend_stanom.roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.OverStations.{}.detrend_stanom.roll11.nc # (slhf, sshf, ssr, str)
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.mld.detrend_stanom.roll11.nc
-        - /home/nsiegert/projects/coastal_sst/data/t_profiles/GlobalMean_STD_Tprofiles_forFig.nc
+        - '/dx02/data/nsiegert/coastal_mhw_data/{}_std_{}_{}_latbinned_bootmeans.nc'.format(varname, ev_type, szn))
+        - '/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Bootstrap_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn))
     - Output files: 
-        - projects/coastal_sst/plots/grl_submission_2.2026/Fig3_coastalsst_grl_2_26.png
+        - projects/coastal_sst/plots/grl_resubmission_6.2026/Fig3_coastalsst_grl_6_26.png
+            - name of file uploaded with manuscript and on github 7/26: "Fig3_coastalsst_grl_7_26.png"
 
 
 Figure S1
-- code/analysis/FigS1_submissionFeb26.ipynb
+- code/analysis/FigS1_resubmissionJun26.ipynb
     - Inputs
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /home/nsiegert/projects/coastal_sst/data/MergedBreaks_temperatures_hadisd.dat
+        - /home/nsiegert/projects/coastal_sst/data/MergedBreaks_dewpoints_hadisd.dat
     - outputs
-        - /home/nsiegert/projects/coastal_sst/plots/grl_submission_2.2026/FigS1_coastalsst_grl_2_26.png
+        - /home/nsiegert/projects/coastal_sst/plots/grl_resubmission_6.2026/FigS1_coastalsst_grl_6_26.png
+            - name of file uploaded with manuscript and on github 7/26: "FigS1_coastalsst_grl_7_26.png"
 
-Figure S2
-- code/analysis/FigS2_submissionFeb26.ipynb
+Figures S2 & S3
+- code/analysis/FigS2S3_resubmissionJun26_homog_test_implementfromHadISD_Fig1.ipynb
+    - inputs
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /home/nsiegert/projects/coastal_sst/data/MergedBreaks_temperatures_hadisd.dat
+        - /home/nsiegert/projects/coastal_sst/data/MergedBreaks_dewpoints_hadisd.dat
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.td.nc
+        - /dx02/data/nsiegert/oisst_station_cirleavg/ALLSTATIONS.1.5deg.daily.sst.1.9.2025.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.sst.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.warm_cold_seasons.nc
+    - outputs
+        - '/home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded_withHomogTest.csv'
+        - /home/nsiegert/projects/coastal_sst/plots/grl_resubmission_6.2026/FigSX_coastalsst_grl_6_26_Fig1HomogTest_1degCutoff.png
+        - /home/nsiegert/projects/coastal_sst/plots/grl_resubmission_6.2026/FigSX_coastalsst_grl_6_26_Fig1HomogTest_2degCutoff.png
+            - Names of files uploaded with manuscript and on github 7/26: "FigS2_coastalsst_grl_7_26_Fig1HomogTest_2degCutoff.png", "FigS3_coastalsst_grl_7_26_Fig1HomogTest_1degCutoff.png"
+
+Figures S4 & S5
+- code/analysis/FigS4S5_resubmissionJun26-homogtestFig2.ipynb
+    - Inputs:
+        - same as in Fig. 2, plus:
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded_withHomogTest.csv
+    - Outputs:
+        - FigS4_coastalsst_grl_7_26_Fig2HomogTest_2degCutoff.png
+        - FigS45_coastalsst_grl_7_26_Fig2HomogTest_1degCutoff.png
+    
+Figure S6
+- code/analysis/FigS6_resubmissionJun26-CopyFig1WithHIandTw.ipynb
+    - Inputs
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.HI.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.Tw.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.Tw.nc
+/home/nsiegert/projects/coastal_sst/code/dataprep/prep_detredanom_daily_Tw_est.ipynb
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.HI.nc
+/home/nsiegert/projects/coastal_sst/code/dataprep/prep_daily_heatindex_expanded.ipynb
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tx.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.tn.nc
+        - /dx02/data/nsiegert/oisst_station_cirleavg/ALLSTATIONS.1.5deg.daily.sst.1.9.2025.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.sst.detrend_anom.roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.warm_cold_seasons.nc
+    - outputs
+        - /home/nsiegert/projects/coastal_sst/plots/grl_resubmission_6.2026/FigSx_coastalsst_grl_6_26_remakeFig1withHITw.png
+            - Names of file uploaded with manuscript and on github 7/26: "FigS6_coastalsst_grl_7_26_remakeFig1withHITw.png"
+
+Figure S7 (This is old Fig. S2
+- code/analysis/FigS7_resubmissionJun26.ipynb
     - Inputs
         - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
@@ -297,17 +401,39 @@ Figure S2
         - /dx02/data/nsiegert/oisst_station_cirleavg/ALLSTATIONS.1.5deg.daily.sst.1.9.2025.nc
         - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.warm_cold_seasons.nc
     - Outputs
-        - /home/nsiegert/projects/coastal_sst/plots/grl_submission_2.2026/FigS2_coastalsst_grl_2_26.png
+        - Names of file uploaded with manuscript and on github 7/26: "FigS7_coastalsst_grl_7_26_latbinned_f1g.png"
 
+Figure S8
+- code/analysis/Fig2_resubmissionJun26.ipynb <-- This script generates Fig. 2 and S8
 
-Figure S3
-- code/analysis/Fig2_submissionFeb26.ipynb
+Figure S9
+- code/analysis/FigS9_resubmissionJun26_concurrent_independence_test.ipynb
+    - Input Files:
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.heatwaves.nc
+    - Output Files:
+        - FigSX_coastalsst_grl_6_26_concurrent_counterfactuals.png
+            - name of file uploaded with manuscript / github repository: "FigS9_coastalsst_grl_7_26_concurrent_counterfactuals.png"
 
-
-Figure S4 & S5
-- code/analysis/FigS4S5_submissionFeb26.ipynb
+Figure S10 & S11 (remade versions of draft1 Fig. S4 and S5)
+- code/analysis/FigS10S11_resubmissionJun26.ipynb
     - Inputs
         - as in the Fig. 3 script
     - outputs 
-        - /home/nsiegert/projects/coastal_sst/plots/grl_submission_2.2026/FigS4_coastalsst_grl_2_26.png
-        - /home/nsiegert/projects/coastal_sst/plots/grl_submission_2.2026/FigS5_coastalsst_grl_2_26.png
+        - FigS10_coastalsst_grl_7_26_latbin_fig3_w.png
+        - FigS11_coastalsst_grl_7_26_latbin_fig3_c.png
+
+Figure S12
+- code/analysis/FigS12_resubmissionJun26_ConcurrentEvStats.ipynb
+    - Inputs
+        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.heatwaves.nc
+        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.warm_cold_seasons.nc
+    - Outputs
+        - FigSx_coastalsst_grl_6_26_averagedurations.png
+            - name of file uploaded with manuscript / github repository: "FigS12_coastalsst_grl_7_26_averagedurations.png"
+
+
+
