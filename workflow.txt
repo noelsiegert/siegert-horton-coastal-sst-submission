@@ -280,7 +280,7 @@ Compute mean Tanomaly profiles during MHW, THW, and concurrent events
         - /glade/u/home/nsiegert/projects/coastal_sst/data/ALLSTATIONS.OverStations.Tprofile.detrend_stanom.roll11.nc
     - output files:
         - /home/nsiegert/projects/coastal_sst/data/t_profiles/GlobalMean_STD_Tprofiles_forFig.nc # (scp'd from NCAR glade to LDEO deela compute systems)
-        -  - '/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn)
+        -'/dx02/data/nsiegert/coastal_mhw_data/{}_{}_Tprofile_anom_ds_{}.nc'.format(ev_type, domain, szn)
 
 Compute mean Tanomaly profiles during MHW, THW, and concurrent events - applying region stratified + density-wtd bootstrap resample
 - /home/nsiegert/projects/coastal_sst/code/analysis/analyze_Tprofiles_with_bootstrap.ipynb
@@ -405,15 +405,6 @@ Figure S7 (This is old Fig. S2
 
 Figure S8
 - code/analysis/Fig2_resubmissionJun26.ipynb <-- This script generates Fig. 2 and S8
-    - Input files:
-        - /home/nsiegert/projects/coastal_sst/data/hadisd_stations_using_Expanded.csv
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.marineheatwaves_roll11.nc
-        - /dx02/data/nsiegert/coastal_mhw_data/ALLSTATIONS.1.5deg.heatwaves.nc 
-    - Output files: 
-        - projects/coastal_sst/plots/grl_resubmission_6.2026/Fig2_coastalsst_grl_6_26.png
-            - name of file uploaded with manuscript and on github 7/26: "Fig2_coastalsst_grl_7_26.png"
-        - projects/coastal_sst/plots/grl_submission_2.2026/FigSe_coastalsst_grl_2_26.png 
-            - name of file uploaded with manuscript / github repository: "FigS8_coastalsst_grl_7_26_reg_trends_in_con_days.png"
 
 Figure S9
 - code/analysis/FigS9_resubmissionJun26_concurrent_independence_test.ipynb
@@ -443,3 +434,6 @@ Figure S12
     - Outputs
         - FigSx_coastalsst_grl_6_26_averagedurations.png
             - name of file uploaded with manuscript / github repository: "FigS12_coastalsst_grl_7_26_averagedurations.png"
+
+
+
